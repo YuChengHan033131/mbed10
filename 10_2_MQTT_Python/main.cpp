@@ -2,6 +2,7 @@
 #include "MQTTNetwork.h"
 #include "MQTTmbed.h"
 #include "MQTTClient.h"
+#include "accelerometer.h"
 
 // GLOBAL VARIABLES
 WiFiInterface *wifi;
@@ -69,12 +70,18 @@ int main() {
 
    butt.rise(&publish_message);
 
+   int count=0;
    while (true) {
-      if (publish) {
+      //if (publish) {
             message_num++;
             MQTT::Message message;
             char buff[100];
-            sprintf(buff, "QoS0 Hello, Python! #%d", message_num);
+            //sprintf(buff, "QoS0 Hello, Python! #%d", message_num);
+            //
+            float x,y,z;
+            accelerometer(x,y,z);
+            sprintf(buff, "[%f,%f,%f]",x,y,z);
+            //
             message.qos = MQTT::QOS0;
             message.retained = false;
             message.dup = false;
@@ -84,8 +91,13 @@ int main() {
 
             printf("rc:  %d\r\n", rc);
             printf("Puslish message: %s\r\n", buff);
+            //---------
+            wait(0.5);
+            //--------
             client.yield(10);
             publish = false;
-      }
+      //}
+      
+
    }
 }
